@@ -14,38 +14,38 @@ class MoviesController < ApplicationController
     #@movies = Movie.all
     #@movies = Movie.order(params[:sort]) 
     @all_ratings = Movie.all_ratings
-    if(params[:filter]==nil and params[:ratings] == nil and params[:sort] == nil and (session[:filter] != nil or session[:sort] != nil or session[:sort] != nil))
-	if(params[:filter] == nil and session[:filter] != nil)
-	  params[:filter] = session[:filter]
+    if(params[:strratings]==nil and params[:ratings] == nil and params[:sort] == nil and (session[:strratings] != nil or session[:sort] != nil or session[:sort] != nil))
+	if(params[:strratings] == nil and session[:strratings] != nil)
+	  params[:strratings] = session[:strratings]
 	end
 	if(params[:sort] == nil and session[:sort] != nil)
 	  params[:sort] = session[:sort]
 	end
-	redirect_to movies_path(:filter => params[:filter], :sort => params[:sort], :ratings => params[:ratings])
+	redirect_to movies_path(:strratings => params[:strratings], :sort => params[:sort], :ratings => params[:ratings])
     else
-	if(params[:filter] != nil and params[:filter] != "[]")
-	  @selected = params[:filter].scan(/[\w-]+/)
-	  session[:filter] = params[:filter]
+	if(params[:strratings] != nil and params[:strratings] != "[]")
+	  @selected = params[:strratings].scan(/[\w-]+/)
+	  session[:strratings] = params[:strratings]
 	else
 	  @selected = params[:ratings]? params[:ratings].keys : @all_ratings
-	  session[:filter] = params[:ratings] ? params[:ratings].keys.to_s : nil
+	  session[:strratings] = params[:ratings] ? params[:ratings].keys.to_s : nil
 	end
     session[:sort] = params[:sort]
     session[:ratings] = params[:ratings]
     if(params[:sort] == "title")
-      if(params[:ratings] or params[:filter])
+      if(params[:ratings] or params[:strratings])
 	@movies = Movie.where(:rating => (@selected==[]? @all_ratings : @selected)).order(params[:sort])
       else
 	@movies = Movie.all.order(params[:sort])
       end
     elsif (params[:sort] == "release_date")
-      if(params[:ratings] or params[:filter])
+      if(params[:ratings] or params[:strratings])
 	@movies = Movie.where(:rating => @selected).order(params[:sort])
       else
 	@movies = Movie.all.order("release_date")
       end
     elsif (params[:sort]==nil)
-      if(params[:ratings] or params[:filter])
+      if(params[:ratings] or params[:strratings])
 	@movies = Movie.where(:rating => @selected==[] ? @all_ratings : @selected)
       else
 	@movies = Movie.all
